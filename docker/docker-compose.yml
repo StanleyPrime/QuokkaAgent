@@ -1,0 +1,13 @@
+services:
+  mcp:
+    image: stanleyfeng/streamlit_agent:latest
+    container_name: test_agent
+    ports:
+      - "8501:8501"
+    # 要哪几个盘就写哪几个
+    volumes:
+      - "C:/:/mnt/c:cached"
+      - "D:/:/mnt/d:cached"
+    # 真要高权限才加：
+    privileged: true
+#    restart: unless-stopped
