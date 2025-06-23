@@ -20,7 +20,6 @@ def search_videos_with_stats(query: str):
 
     API_KEY = os.getenv("YOUTUBE_API_KEY")
 
-    # API_KEY = "AIzaSyAr8ZKwTkIsGTAELCW9OBGRGkg5F-69MkU"
     youtube = build("youtube", "v3", developerKey=API_KEY)
 
     # 第一步：搜索，拿到 videoId 列表
