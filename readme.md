@@ -110,7 +110,7 @@ services:
 ```bash
 # 1）克隆仓库
 git clone https://github.com/StanleyPrime/QuokkaAgent.git
-cd streamlit_agent
+cd QuokkaAgent
 
 # 2）可选但强烈推荐：创建并激活虚拟环境
 python -m venv .venv
