@@ -17,6 +17,8 @@ start "ScrapVid Server"   cmd /k python ScrapVedio_server.py
 start "StreamlitSrv"      cmd /k python streamlitServer.py
 start "WebSearch Server"  cmd /k python WebSearch_server.py
 start "YouTube Server"    cmd /k python youtube_server.py
+start "Video_Processing_server"    cmd /k python Video_Processing_server.py
+start "mornitor_server"    cmd /k python mornitor_server.py
 
 REM ============= 回到项目根目录 =============
 cd /d "%~dp0"
