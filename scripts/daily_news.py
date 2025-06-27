@@ -254,10 +254,6 @@ async def main(taskname: str, query: str, save_dir:str=None,sent_to_phone:bool=F
 
 现在开始比对并生成仅含“新增信息”的时间线。
 """
-    # client = OpenAI(
-    #     base_url="https://openrouter.ai/api/v1",
-    #     api_key="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",
-    # )
 
     client = OpenAI(
         api_key=os.getenv("GOOGLE_API_KEY"),
