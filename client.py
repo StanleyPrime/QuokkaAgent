@@ -1,3 +1,16 @@
+import types
+try:
+    import torch
+
+    # 伪造一个“类包路径对象”，满足监视器 list(module.__path__._path) 的要求
+    class _FakePath(list):
+        @property
+        def _path(self):       # 必须带 _path
+            return []          # 空列表即可
+
+    torch.classes.__path__ = _FakePath()
+except ImportError:
+    pass
 import asyncio, os, json
 from dotenv import load_dotenv, set_key, dotenv_values
 from pathlib import Path
@@ -90,10 +103,61 @@ def stream_data(answer):
         time.sleep(0.1)
 
 
+def get_task():
+    # 找到当前文件所在目录
+    base_dir = Path(__file__).resolve().parent
+    # 拼出 JSON 文件的完整路径
+    json_path = base_dir / "Tasklist" / "Task.json"
+    # 读取并解析
+    with json_path.open("r", encoding="utf-8") as f:
+        tasks = json.load(f)
+
+    if not tasks:
+        return "用户还未创建任何的定时任务"
+
+    # 3. 拼接文本
+    lines = []
+    for idx, task in enumerate(tasks, start=1):
+        name = task.get("TaskName", "")
+        desc = task.get("Description", "")
+        sched = task.get("Schedule", "")
+        time = task.get("Time", "")
+        date = task.get("Date", "")
+
+        lines.append(f"任务{idx}：{name}")
+        lines.append(f"任务描述: {desc}")
+
+        # 根据 daily/once 分别处理
+        if sched == "daily":
+            lines.append(f"调度方式: 每日 {time} 执行一次")
+        elif sched == "once":
+            lines.append(f"调度方式: 在 {date} 的 {time} 执行一次")
+        else:
+            # 如果有其他类型，直接原样输出
+            lines.append(f"调度方式: {sched} {date} {time}")
+
+        # 分隔线
+        if idx != len(tasks):
+            lines.append("========================")
+
+    # 4. 合并并输出
+    result = "\n".join(lines)
+    return result
+
+
+TASK = get_task()
+
+
 SYSTEM_MESSAGE = f'''现在的时间是：{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}。
+在此之前用户有可能创建了一系列的定时或每日自动执行的脚本任务，任务的内容如下:
+
+{TASK}
+
+
 你是一名严格遵守步骤的 AI 助手，当前可用工具有：
 
 {{TOOLS}}
+
 
 请严格按照 **工作流** 行事：
 ① 当任务需要工具时，先用中文说明【整体计划】；  
@@ -234,6 +298,23 @@ class MCPAgent:
                         "name": name,  # ← 有些版本需要 name 字段
                         "content": "表格展示成功"
                     })
+            elif name == "show_gif_frontend":
+                gif_path = args["gif_path"].strip('"').strip("'")
+                path = str(gif_path)
+                with open(path, "rb") as f:
+                    gif_bytes = f.read()
+                b64 = base64.b64encode(gif_bytes).decode("utf-8")
+                st.markdown(
+                    f'<img src="data:image/gif;base64,{b64}" alt="动画">',
+                    unsafe_allow_html=True
+                )
+                st.session_state.messages.append({"role": "assistant", "gif": gif_path})
+                self.history.append({
+                    "role": "tool",
+                    "tool_call_id": call.id,  # ← 一定要填 call.id
+                    "name": name,  # ← 有些版本需要 name 字段
+                    "content": "gif图展示成功"
+                })
             else:
                 with st.spinner(f"正在执行工具{name}", show_time=True):
                     server_name = self.tool_to_server[name]
@@ -329,6 +410,19 @@ AVAILABLE_SERVICES = {
         "needs_key": True,  # 需要额外 Key
         "env_var": "YOUTUBE_API_KEY",
     },
+    "定时任务服务":{
+        "endpoint":"mornitor_server",
+        "url":"http://127.0.0.1:8011/mcp",
+        "needs_key": True,  # 需要额外 Key
+        "env_var": "PUSHDEER_API_KEY",
+    },
+    "视频处理服务":{
+        "endpoint":"mornitor_server",
+        "url":"http://127.0.0.1:8012/mcp",
+        "needs_key": False,  # 需要额外 Key
+        "env_var": None,
+    }
+
     # 下面想开哪个就放哪个，同理添加
     # "CoinMarketCap": {...}
 }
@@ -502,11 +596,19 @@ for group in grouped_msgs:
                     file_name=meta["file_name"],
                     mime=meta["mime"],
                 )
+            elif msg.get("gif"):
+                with open(msg["gif"], "rb") as f:
+                    gif_bytes = f.read()
+                b64 = base64.b64encode(gif_bytes).decode("utf-8")
+                st.markdown(
+                    f'<img src="data:image/gif;base64,{b64}" alt="动画">',
+                    unsafe_allow_html=True
+                )
 
 if prompt := st.chat_input(
         "ask any question or upload image or file",
         accept_file=True,
-        file_type=["jpg", "jpeg", "png", "pdf", "txt", "py", "md"],
+        file_type=["jpg", "jpeg", "png", "pdf", "txt", "py", "md","mp4"],
 ):
     full_prompt = ""
     data_uri_list = []
@@ -606,6 +708,17 @@ if prompt := st.chat_input(
                         "mime": "application/pdf",
                     }
                 })
+            elif name.endswith("mp4"):
+                # 2) 构造要保存的路径
+                save_dir = Path(__file__).resolve().parent/"videos"
+                os.makedirs(save_dir, exist_ok=True)
+                save_path = os.path.join(save_dir,name)
+                # 3) 写入文件
+                with open(save_path, "wb") as f:
+                    f.write(file_bytes)
+                st.video(save_path)
+                st.session_state.messages.append({"role":"user","video":save_path})
+                full_prompt += f"\n用户上传了一个视频文件，视频文件的绝对路径是:{save_path}"
             else:
                 st.info("不支持此文件格式")
     if prompt and prompt.text:

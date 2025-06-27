@@ -36,6 +36,14 @@ def show_dataframe_frontend(dataframe_path:str):
     """
     return "表格展示成功"
 
+@mcp.tool()
+def show_gif_frontend(gif_path:str):
+    """
+        将路径中的.gif格式的文件通过streamlit通过streamlit模块将gif动图展示到前端给用户看。
+        Params:
+           gif_path:String,.gif格式文件的绝对路径，比如:r"C:\\24.gif"
+    """
+    return "gif图展示成功"
 
 
 if __name__ == '__main__':
