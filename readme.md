@@ -82,10 +82,10 @@
 
 ```bash
 # 1）克隆仓库
-git clone https://github.com/StanleyPrime/streamlit_agent.git
+git clone https://github.com/StanleyPrime/QuokkaAgent.git
 
 # 2）进入 **包含 `docker-compose.yml` 的文件夹**
-cd streamlit_agent/docker
+cd QuokkaAgent/docker
 
 # 3）启动 🚀
 docker compose up -d
@@ -109,7 +109,7 @@ services:
 
 ```bash
 # 1）克隆仓库
-git clone https://github.com/<your-github-id>/streamlit_agent.git
+git clone https://github.com/StanleyPrime/QuokkaAgent.git
 cd streamlit_agent
 
 # 2）可选但强烈推荐：创建并激活虚拟环境
@@ -165,7 +165,7 @@ streamlit_agent/
 * [ ] 🎨 UI 自定义 —— 主题、布局选项及自定义组件支持
 * [ ] 📱 移动友好 UI —— 响应式设计及 PWA 支持
 
-完整功能提议请见 [open issues](https://github.com/<your-github-id>/streamlit_agent/issues)。
+完整功能提议请见 [open issues](https://github.com/StanleyPrime/streamlit_agent/issues)。
 
 ---
 
