@@ -1,4 +1,4 @@
-# streamlit\_agent
+# QuokkaAgent
 
 > **将自主 AI 代理带到 Streamlit —— 构建你自己的 GUI-代理小助手。**
 
