@@ -63,6 +63,11 @@
     <img src="./gifs/demo7.gif" width="600px" alt="Demo7"/>
   </div>
 
+  <div style="text-align: center;">
+    <strong>演示 8</strong><br/>
+    <img src="./gifs/demo8.gif" width="600px" alt="Demo8"/>
+  </div>
+
 </div>
 
 > 📽 录屏展示了代理在七个场景中的表现，包括 Markdown 编辑、视频播放及图像生成等。
