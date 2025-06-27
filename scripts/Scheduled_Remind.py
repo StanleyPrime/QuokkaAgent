@@ -156,7 +156,7 @@ def pushdeer_push(task_job: str,description:str):
 """
 
     client = OpenAI(
-        api_key="AIzaSyDCAGUINNzc1iLKtrBga4TV6HbXOgrp7oM",
+        api_key=os.getenv("GOOGLE_API_KEY"),
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
     )
 
