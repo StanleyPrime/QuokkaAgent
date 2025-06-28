@@ -20,7 +20,7 @@ Params：
 Returns:
     String，生成好图片以后会返回图片保存的绝对路径。
     """
-    ENV_PATH = Path(__file__).with_name(".env")
+    ENV_PATH = Path(__file__).parent.with_name(".env")
 
     load_dotenv(dotenv_path=ENV_PATH, override=True)
 
