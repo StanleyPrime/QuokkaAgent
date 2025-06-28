@@ -193,7 +193,7 @@ def sent_phone_task(task_name: str,
 
     Params:
         task_name (str): 计划任务的名称，即给这个任务起一个名字(英文)，如：DailyMessage。
-        task_job (str): 告知一下任务是什么，比如:"每日的问候"或"提醒用户去xxxx"等。直接说明任务，不需要说明时间，如"明天或者几月几号等.."
+        task_job (str): 告知一下任务是什么，比如:"每日的问候"或"提醒用户去xxxx"等。请直接说明任务，**任务中不要提任何时间**，如"明天或者几月几号等..都不能提！"
         schedule:调度类型(有两个选择)，"daily"：每天触发，表示每天定时触发任务一次，"once" ：只触发一次，表示可以在指定的日期时间点触发一次任务
         time_hhmm (str, optional): 任务触发的时间，24 小时制 ``"HH:MM"``。*Daily* 与 *Once* 均适用。
         date_ymd (str | None, optional):``"YYYY-MM-DD"``，仅在 ``schedule="once"`` 时有效。若为 ``None`` 会取今日 +1 天。
