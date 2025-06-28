@@ -198,7 +198,7 @@ def sent_phone_task(task_name: str,
         time_hhmm (str, optional): 任务触发的时间，24 小时制 ``"HH:MM"``。*Daily* 与 *Once* 均适用。
         date_ymd (str | None, optional):``"YYYY-MM-DD"``，仅在 ``schedule="once"`` 时有效。若为 ``None`` 会取今日 +1 天。
         boot_trigger (bool, optional): 仅对 ``schedule="daily"`` 有意义。``True`` → 开机即执行；``False``（默认）→ 仅按 ``time_hhmm`` 执行。
-        description (str, optional): 对当前这个任务的详细描述，比如这个任务有什么注意事项，比如:"任务是提醒用户出门见朋友，**注意提醒用户记得带钱包。**"
+        description (str, optional): 对当前这个任务的详细描述，比如这个任务有什么注意事项，比如:"任务是提醒用户出门见朋友，**注意提醒用户记得带钱包。**"，也不允许提时间！
         as_system (bool, optional): 是否以 SYSTEM 账户运行（需管理员权限）。有默认值为False，不需要主动改。
         py_path (str | None, optional): Python 解释器绝对路径；默认 ``sys.executable``，有默认值，无需填写。
         script_path (str | None, optional): 被调用的抓取脚本绝对路径；默认 ``<BASE_DIR>/scripts/Scheduled_Remind.py``。无需填写。
