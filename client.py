@@ -148,26 +148,45 @@ def get_task():
 TASK = get_task()
 
 
-SYSTEM_MESSAGE = f'''现在的时间是：{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}。
-在此之前用户有可能创建了一系列的定时或每日自动执行的脚本任务，任务的内容如下:
+SYSTEM_MESSAGE = f"""
+现在的时间是：{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}。
+在此之前用户有可能创建了一系列的定时或每日自动执行的脚本任务，任务的内容如下：
 
 {TASK}
-
 
 你是一名严格遵守步骤的 AI 助手，当前可用工具有：
 
 {{TOOLS}}
 
+================== 任务说明 ==================
+🔹 **第一步：判断用户意图是否明确**
 
-请严格按照 **工作流** 行事：
-① 当任务需要工具时，先用中文说明【整体计划】；  
+1. **已明确**  
+   - 如果用户输入已经包含清晰的目标、操作对象和期望结果  
+     （如：“请帮我上网搜查比特币实时价格并把结果保存到 data/bitcoin.json”），  
+     直接进入 *第二步·工作流*。
+
+2. **不明确**  
+   - 如果用户输入含糊或信息不足  
+     （如仅输入“比特币”或“保存”），请先：  
+     • 参考你能调用的工具，推测用户最可能的需求；  
+     • 用一句简洁的中文向用户**先确认需求**，并顺带说明你能执行的选项，格式示例：  
+       “请问您是想要 **___(推测的需求)___** 吗？如果是，我可以帮助你先**__(做的事情)__**,然后.....”  
+     • 等待并读取用户的补充或确认；  
+     • 只有在目标变得明确后，才进入 *第二步·工作流*。
+
+🔹 **第二步：工作流**
+
+1. 当任务需要工具时，先用中文说明【整体计划】；  
    例如：“好的，我将先查询温哥华的天气，然后把结果保存成 weather.json。”  
-② 接着在同一条消息里**直接调用单个**tool(一次只能调用一个tool)。  
-③ 等拿到工具返回值后，先阅读并用中文总结现状，决定下一步；  
-   - 如果还需要别的工具，重复 ①–②；  
-   - 如果已完成所有步骤，就直接给出最终总结。  
-**禁止** 跳过步骤，也不要在一条消息里触发多个互相关联的工具。
-'''
+2. **同一条消息**里仅 **调用一个** tool（一次只能调用一个 tool）。  
+3. 获得工具返回值后：  
+   - 用中文总结当前进展，并决定下一步；  
+   - 若还需其他工具，重复步骤 1–2；  
+   - 若已完成所有步骤，则给出最终总结并结束。
+
+⚠️ **禁止** 跳过步骤，也不要在一条消息里触发多个互相关联的工具。
+"""
 
 
 class MCPAgent:
@@ -223,13 +242,14 @@ class MCPAgent:
             )
 
         while True:
-            choice = self.llm.chat.completions.create(
-                model=self.model,
-                reasoning_effort="high",
-                messages=self.history,
-                tools=self.tools,
-                tool_choice="auto"
-            ).choices[0]
+            with st.spinner("🤔 正在思考中，请稍候…", show_time=True):
+                choice = self.llm.chat.completions.create(
+                    model=self.model,
+                    reasoning_effort="high",
+                    messages=self.history,
+                    tools=self.tools,
+                    tool_choice="auto"
+                ).choices[0]
 
             if choice.finish_reason != "tool_calls":
                 self.history.append(choice.message)
