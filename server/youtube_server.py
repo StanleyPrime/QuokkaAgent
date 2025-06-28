@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-ENV_PATH = Path(__file__).with_name(".env")   # 100% 指向当前脚本所在目录
+ENV_PATH = Path(__file__).parent.with_name(".env")   # 100% 指向当前脚本所在目录
 
 load_dotenv(dotenv_path=ENV_PATH, override=False)
 
