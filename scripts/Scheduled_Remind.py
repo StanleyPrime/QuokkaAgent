@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import os
 
 
-BASE_DIR   = pathlib.Path(__file__).parent[1]
+BASE_DIR   = pathlib.Path(__file__).parents[1]
 TASK_FILE  = BASE_DIR / "Tasklist" / "Task.json"
 TASK_FILE.parent.mkdir(exist_ok=True)          # 确保 Tasklist 目录存在
 
@@ -96,7 +96,7 @@ def pushdeer_push(task_job: str,description:str):
 
     pushkey = os.getenv("PUSHDEER_API_KEY")
 
-    Date = datetime.now()
+    Date = datetime.datetime.now()
     print(Date)
 
     SYSTEM_PROMPT = f"""
