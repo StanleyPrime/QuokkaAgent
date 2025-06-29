@@ -39,6 +39,17 @@ def read_file(path: str) -> str | None:
         return None
 
 
+@mcp.tool()
+def read_image_file(path:str):
+    """
+直接获取到图片格式的文件内容(jpg，png,webp等).**如果是想要直接看到图片内容就调用这个函数。**
+Params:
+    path:图片的绝对路径，比如:r"C:\\Users\\85321\\OneDrive\\图片\\屏幕快照\\1.png"
+Return:
+    直接返回图片的内容以便做图片描述或者理解。
+"""
+
+
 
 @mcp.tool()
 def read_multiple_files(paths: list[str]) -> dict[str, str | None]:
