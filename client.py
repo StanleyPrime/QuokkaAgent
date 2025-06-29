@@ -335,6 +335,31 @@ class MCPAgent:
                     "name": name,  # ← 有些版本需要 name 字段
                     "content": "gif图展示成功"
                 })
+            elif name =="read_image_file":
+                image_path2 = args["path"].strip('"').strip("'")
+
+                def encode_image_to_data_uri(image_path: str) -> str:
+                    # 先猜一下文件的 MIME 类型
+                    mime_type, _ = mimetypes.guess_type(image_path)
+                    if mime_type is None:
+                        # 如果猜不出来，就用扩展名简单拼一个
+                        ext = os.path.splitext(image_path)[1].lstrip('.').lower()
+                        mime_type = f"image/{ext}"
+
+                    # 读文件并做 base64 编码
+                    with open(image_path, "rb") as f:
+                        data = f.read()
+                    b64 = base64.b64encode(data).decode('utf-8')
+
+                    # 拼成 Data URI
+                    return f"data:{mime_type};base64,{b64}"
+                data_uri = encode_image_to_data_uri(image_path2)
+
+                self.history.append({
+                    "role": "user",
+                    "content": [{"type": "text", "text": "图片内容如上:"},
+                                {"type": "image_url", "image_url": {"url": data_uri,"detail": "auto"}}]
+                })
             else:
                 with st.spinner(f"正在执行工具{name}", show_time=True):
                     server_name = self.tool_to_server[name]
